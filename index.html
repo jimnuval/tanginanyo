@@ -1,0 +1,207 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <title>Document</title>
+</head>
+<body>
+  <body>
+    <input type="checkbox" id="cart">
+    <label for="cart" class="label-cart"><span class="fas fa-shopping-cart"></span></label>
+
+    <h3 class="logo"> DAD BERGER</h3>
+
+    <div class="logo-container">
+      <img src="images/logo.png" alt="Logo">
+    </div>
+
+    <div class="dashboard">
+        <div class="dashboard-banner">
+            <img src="images/images-banner.jpg">
+            <div class="banner-promo">
+                <h1><span>50% OFF</span><br>
+                Tasty Food <br> On Your Hand</h1>
+            </div>
+        </div>
+
+        <h3 class="dashboard-title">Recommend Food For You</h3>
+        <div class="dashboard-menu">
+            <a href="#">Favorites</a>
+            <a href="#">Best Seller</a>
+            <a href="#">Top Rated</a>
+            <a href="#">All</a>
+        </div>
+
+
+        <div class="dashboard-content">
+            <div class="dashboard-card">
+                <img class="card-image" src="images/images1.jpg">
+                <div class="card-detail">
+                    <h4>Amazing Pizza<span>$30</span></h4>
+                    <p>okinam</p>
+                    <button class="add-to-cart-btn"><span class="fas fa-shopping-cart"></span> Add to Cart</button>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <img class="card-image" src="images/images2.jpg">
+                <div class="card-detail">
+                    <h4>Salad<span>$80</span></h4>
+                    <p>okinam</p>
+                    <button class="add-to-cart-btn"><span class="fas fa-shopping-cart"></span> Add to Cart</button>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <img class="card-image" src="images/images3.jpg">
+                <div class="card-detail">
+                    <h4>Pancake<span>$30</span></h4>
+                    <p>okinam</p>
+                    <button class="add-to-cart-btn"><span class="fas fa-shopping-cart"></span> Add to Cart</button>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <img class="card-image" src="images/images4.jpg">
+                <div class="card-detail">
+                    <h4>Steak<span>$10</span></h4>
+                    <p>okinam</p>
+                    <button class="add-to-cart-btn"><span class="fas fa-shopping-cart"></span> Add to Cart</button>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <img class="card-image" src="images/images5.jpg">
+                <div class="card-detail">
+                    <h4>Ice Cream<span>$20</span></h4>
+                    <p>okinam</p>
+                    <button class="add-to-cart-btn"><span class="fas fa-shopping-cart"></span> Add to Cart</button>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <img class="card-image" src="images/images6.jpg">
+                <div class="card-detail">
+                    <h4>Burger<span>$50</span></h4>
+                    <p>okinam</p>
+                    <button class="add-to-cart-btn"><span class="fas fa-shopping-cart"></span> Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-order">
+      <label for="cart" class="close-icon"><span class="fas fa-times"></span></label>
+        <h3>Order Menu</h3>
+        <div class="order-wrapper"></div>
+      
+        <div class="order-total">
+          Total: $<span>0.00</span>
+      </div>
+        <button class="checkout">
+            Checkout
+        </button>
+    </div>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+          const orderWrapper = document.querySelector('.order-wrapper');
+          const orderTotal = document.querySelector('.order-total span');
+  
+          addToCartButtons.forEach((button, index) => {
+              button.addEventListener('click', function () {
+                  const cardDetail = this.parentElement;
+                  const productImage = cardDetail.previousElementSibling.src;
+                  const productName = cardDetail.querySelector('h4').innerText;
+                  const productPrice = parseFloat(cardDetail.querySelector('span').innerText.replace('$', ''));
+                  const productQuantity = 1;
+  
+                  if (isProductInOrder(productName)) {
+                      updateProductInOrder(productName, productPrice, productQuantity);
+                  } else {
+                      addToOrder(productImage, productName, productPrice, productQuantity);
+                  }
+  
+                  updateSubtotal();
+              });
+          });
+  
+          function addToOrder(image, name, price, quantity) {
+              const orderItem = document.createElement('div');
+              orderItem.classList.add('order-card');
+              orderItem.dataset.price = price;
+              orderItem.dataset.quantity = quantity;
+              orderItem.dataset.name = name;
+              orderItem.innerHTML = `
+                  <img class="order-image" src="${image}">
+                  <div class="order-detail">
+                      <h4>${name}</h4>
+                      <p>Price: $<span class="order-price">${price.toFixed(2)}</span></p>
+                      <p>Quantity: <span class="order-quantity">${quantity}</span></p>
+                  </div>
+                  <div class="order-actions">
+                      <button class="order-action add"><i class="fa fa-plus"></i></button>
+                      <button class="order-action subtract"><i class="fa fa-minus"></i></button>
+                      <button class="remove-from-order"><i class="fa fa-trash"></i></button>
+                  </div>
+              `;
+  
+              orderWrapper.appendChild(orderItem);
+  
+              // Add event listeners for quantity control buttons
+              const addAction = orderItem.querySelector('.add');
+              const subtractAction = orderItem.querySelector('.subtract');
+              const removeButton = orderItem.querySelector('.remove-from-order');
+  
+              addAction.addEventListener('click', function () {
+                  updateProductInOrder(name, price, 1);
+                  updateSubtotal();
+              });
+  
+              subtractAction.addEventListener('click', function () {
+                  updateProductInOrder(name, price, -1);
+                  updateSubtotal();
+              });
+  
+              removeButton.addEventListener('click', function () {
+                  orderWrapper.removeChild(orderItem);
+                  updateSubtotal();
+              });
+          }
+  
+          function isProductInOrder(productName) {
+              const orderCards = document.querySelectorAll('.order-card');
+              return Array.from(orderCards).some(card => card.dataset.name === productName);
+          }
+  
+          function updateProductInOrder(productName, price, quantity) {
+              const orderCards = document.querySelectorAll('.order-card');
+              orderCards.forEach(card => {
+                  if (card.dataset.name === productName) {
+                      const currentQuantity = parseInt(card.dataset.quantity);
+                      const newQuantity = Math.max(currentQuantity + quantity, 1);
+                      const newPrice = price * newQuantity;
+                      card.dataset.price = newPrice;
+                      card.dataset.quantity = newQuantity;
+                      card.querySelector('.order-quantity').innerText = newQuantity;
+                      card.querySelector('.order-price').innerText = newPrice.toFixed(2);
+                  }
+              });
+          }
+  
+          function updateSubtotal() {
+              const orderCards = document.querySelectorAll('.order-card');
+              let subtotal = 0;
+  
+              orderCards.forEach(card => {
+                  const price = parseFloat(card.dataset.price);
+                  subtotal += price;
+              });
+  
+              orderTotal.innerText = subtotal.toFixed(2);
+          }
+      });
+  </script>
+    
+</body>
+</html>
